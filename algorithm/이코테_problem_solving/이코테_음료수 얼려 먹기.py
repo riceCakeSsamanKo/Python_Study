@@ -37,7 +37,7 @@ print(count)
 ### <풀이 2 - BFS 사용한 풀이> ###
 from collections import deque
 
-# 탐색 알고리즘
+# search
 def bfs(graph, x, y, visited):
     queue = deque()
     queue.append((x,y))

@@ -49,7 +49,7 @@ print(graph[n-1][m-1])
 dx = [-1,0,1,0]
 dy = [0,-1,0,1]
 
-#탐색 알고리즘
+#search
 def bfs(graph,x,y):
     queue = deque()
     queue.append((x,y))
