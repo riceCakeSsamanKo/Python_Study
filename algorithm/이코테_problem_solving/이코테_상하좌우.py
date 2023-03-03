@@ -5,24 +5,23 @@
 
 # 초기 입력
 n = int(input())
-x,y = 1, 1
+x, y = 1, 1
 plans = list(input().split())
 
 # 이동 방향들
-dx=[0,0,-1,1]
-dy=[-1,1,0,0]
-move_types = ['L','R','U','D']
+dx = [0, 0, -1, 1]
+dy = [-1, 1, 0, 0]
+move_types = ['L', 'R', 'U', 'D']
 
 # 이동하기
 for plan in plans:  # 이동 계획 확인
     for i in range(len(move_types)):  # 확인한 계획에서 이동 방향 좌표 확인 후 이동
         if move_types[i] == plan:
-            if(1 <= x+dx[i] <= n and
+            if (1 <= x + dx[i] <= n and
                     1 <= y + dy[i] <= n):
-                x+=dx[i]
-                y+=dy[i]
-print(x,y)
-
+                x += dx[i]
+                y += dy[i]
+print(x, y)
 
 """
 ps: 풀이가 좀 별론거 같음
@@ -49,4 +48,3 @@ for d in dirList:
 print(position[0]+1, position[1]+1)
 
 """
-
