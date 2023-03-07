@@ -66,4 +66,3 @@ for i in range(1,n+1):
         print(f"{i}: Could not reach")
     else:
         print(f"{i}: {distance[i]}")
-        print(f"{i}: {distance[i]}")
