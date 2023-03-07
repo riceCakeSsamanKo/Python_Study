@@ -38,6 +38,8 @@ def get_smallest_node():
             index = i
     return index
 
+
+# 단순하게 구현한 다익스트라. 시간 복잡도: O(V^2) v는 노드 수
 def diijkstra_simple(start):
     # 출발 노드 설정
     distance[start] = 0
