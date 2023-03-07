@@ -44,21 +44,20 @@ def diijkstra_simple(start):
     visited[start] = True
     # node는 (출발 노드 연결 노드, 거리)
     for node in graph[start]:
-        connected_node_index = node[0]
+        node_index = node[0]
         cost = node[1]
-        distance[connected_node_index] = cost  #출발 노드부터 출발노드에 직접 연결된 노드까지의 거리 그래프 초기화
+        distance[node_index] = cost  #출발 노드부터 출발노드에 직접 연결된 노드까지의 거리 초기화
     for i in range(n-1):
         # 최단거리가 가장짧은 노드
         now = get_smallest_node()
         visited[now] = True
         # 현재 노드와 연결된 다른 노드 확인
-        for connected_node in graph[now]:
-            connected_node_index = connected_node[0]
-            now_to_connected_node_cost = connected_node[1]
-            cost = distance[now] + now_to_connected_node_cost
+        for node in graph[now]:
+            node_index = node[0]
+            cost = distance[now] + node[1]
             # 현재 노드를 거쳐서 다른 노드로 이동하는 경우가 더 짧은 경우
-            if distance[connected_node_index] > cost:
-                distance[connected_node_index] = cost
+            if distance[node_index] > cost:
+                distance[node_index] = cost
 
 diijkstra_simple(start)
 
