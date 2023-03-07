@@ -41,8 +41,8 @@ def get_smallest_node():
 def diijkstra_simple(start):
     # 출발 노드 설정
     distance[start] = 0
-    visited[start]=True
-    # n은 (출발 노드 연결 노드, 거리)
+    visited[start] = True
+    # node는 (출발 노드 연결 노드, 거리)
     for node in graph[start]:
         connected_node_index = node[0]
         cost = node[1]
