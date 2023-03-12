@@ -13,7 +13,7 @@ INF = int(1e9)
 n, m = map(int, input().split())
 
 # graph[a] = b: a와 b는 양방향 이동이 가능함. 한 간선의 길이는 1로 고정
-graph = [[INF] * (n + 1) for _ in range(n+1)]
+graph = [[INF] * (n + 1) for _ in range(n + 1)]
 
 # 연결된 두 회사 입력
 for _ in range(m):
@@ -25,19 +25,20 @@ for _ in range(m):
 # 도착지 x, 경유지 k
 x, k = map(int, input().split())
 
+
 # 플로이드-워셜 알고리즘
 def floyd_warshall(start):
     # 자기 자신의 거리는 0
-    for i in range(1,n+1):
+    for i in range(1, n + 1):
         graph[i][i] = 0
-    for k in range(1,n+1):
-        for a in range(1,n+1):
-            for b in range(1,n+1):
-                graph[a][b] = min(graph[a][b], graph[a][k]+graph[k][b])
+    for k in range(1, n + 1):
+        for a in range(1, n + 1):
+            for b in range(1, n + 1):
+                graph[a][b] = min(graph[a][b], graph[a][k] + graph[k][b])
 
 
 floyd_warshall(1)
-distance = graph[1][k]+graph[k][x]
+distance = graph[1][k] + graph[k][x]
 if distance == INF:
     print("Could not reach")
 else:
