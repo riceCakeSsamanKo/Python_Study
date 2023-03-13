@@ -36,7 +36,7 @@ for _ in range(e):
     union_parent(parent, a, b)  # O(ve)
 
 # 각 원소가 속한 집합 출력
-print("<각 원소가 속한 집합>")
+print("<각 원소가 속한 집합(각 원소의 루트)>")
 for i in range(1, v + 1):
     print(f"root[{i}]= {find_parent(parent, i)}", end=" ")
 print("\n")
@@ -44,5 +44,5 @@ print("\n")
 # 부모 테이블 내용 출력
 print("<부모 테이블>")
 for i in range(1, v + 1):
-    print(f"parent[{i}]= {find_parent(parent, i)}", end=" ")
+    print(f"parent[{i}]= {parent[i]}", end=" ")
 print()
