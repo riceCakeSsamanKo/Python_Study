@@ -1,3 +1,5 @@
+# 알고리즘 분석 과제 3-5
+
 n = int(input())
 d = []  #ai = di*di+1, d0 = 0
 d.append(0) 
