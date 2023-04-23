@@ -2,12 +2,12 @@ from socket import *
 
 # 서버 정보 (IP, Port)
 UDP_IP = '127.0.0.1'
-UDP_PORT = 5005
+UDP_PORT = 12345
 
 # 소켓 생성 (IPv4, UDP)
 sock = socket(AF_INET, SOCK_DGRAM)
 sock.bind((UDP_IP, UDP_PORT))
-
+print("The server is ready to receive")
 while True:
     # 클라이언트로부터 데이터 수신
     data, clientAddress = sock.recvfrom(1024)
