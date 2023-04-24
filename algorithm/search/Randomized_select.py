@@ -1,5 +1,6 @@
 # Randomized Selection 알고리즘.
-#
+# 시간 복잡도 O(N) 최악의 경우 O(N^2)
+
 # 1) 배열 A에서 임의의 pivot을 선택.
 # 2) pivot을 기준으로 A를 분할. pivot보다 작은 원소는 A_left에, 큰 원소는 A_right에 저장.
 # 3) pivot이 A_left에 k-1개 이상 포함되어 있다면, A_left에서 k번째 작은 원소를 찾기 위해 재귀적으로 Randomized Selection 함수를 호출.
@@ -9,11 +10,12 @@ import random
 
 count = 0
 def randomized_selection(A, k):
-    global count
-    count+=1
     """
     배열 A에서 k번째로 큰 원소를 찾는 함수
     """
+    global count
+    count += 1
+
     n = len(A)
     if n == 1:  # 기저 조건
         return A[0]
