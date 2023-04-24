@@ -1,7 +1,8 @@
 # 알고리즘 분석 과제 3-5
 
+#노드 개수
 n = int(input())
-
+# 각 노드별 탐색 확률 p
 p = []
 p.append(0.)
 
@@ -11,6 +12,7 @@ for x in list(map(float, input().split())):
 opt = [[0] * (n + 1) for _ in range(n + 2)]  # opt 배열
 array_k = [[0] * (n + 1) for _ in range(n + 1)]  # 최소 k를 담는 배열
 
+# i부터 j 노드까지의 확률의 합
 def sum_probability(i, j):
     result = 0
     for idx in range(i, j+1):
