@@ -47,7 +47,7 @@ data = text_count(paragraph)
 
 min_heap = []
 for k,v in data.items():
-    min_heap.append((v,Node(k,v)))
+    min_heap.append(Node(k,v))
 
 # min_heap은 텍스트 빈도로 정렬됨
 heapq.heapify(min_heap)
@@ -55,18 +55,18 @@ heapq.heapify(min_heap)
 while len(min_heap) !=1:
 
     # l = 왼쪽 노드, r = 오른쪽 노드
-    l = heapq.heappop(min_heap)[1]
-    r = heapq.heappop(min_heap)[1]
+    l = heapq.heappop(min_heap)
+    r = heapq.heappop(min_heap)
     if l.text == "\n":
         l.text = "[enter]"
     if r.text == "\n":
         r.text = "[enter]"
 
     total_freq = l.freq+r.freq
-    heapq.heappush(min_heap,(total_freq, Node(l.text+r.text,total_freq,l,r)))
+    heapq.heappush(min_heap,Node(l.text+r.text,total_freq,l,r))
 
 huffman_code = {}
-encode(min_heap[0][1],'',huffman_code)
+encode(min_heap[0],'',huffman_code)
 print(huffman_code)
 
 
