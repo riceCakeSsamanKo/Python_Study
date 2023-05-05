@@ -14,7 +14,7 @@ for x in list(map(int, input().split())):
 opt = [['x']*(n+1) for _ in range(n+1)]
 
 # p는 opt[i][j]를 계산시 k를 담아 두는 배열
-# opt[i][j] = min(opt[i][k] + opt[k+1][j] + di*d(k+1)*dj)
+# opt[i][j] = min(opt[i][k] + opt[k+1][j] + di*d(k+1)*d(j+1))
 p = [['x']*(n+1) for _ in range(n+1)]
 
 for i in range(1,n+1):
