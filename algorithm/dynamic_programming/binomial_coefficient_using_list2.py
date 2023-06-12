@@ -17,5 +17,5 @@ def bin(n,k):
                 dp[i][j] = dp[i-1][j]+dp[i-1][j-1]
     return dp[n][k]
 
-print(bin(20,14))
+print(bin(1000,500))
 print(count)  # 재귀 이용시 count = 77518. ㅋㅋㅋ

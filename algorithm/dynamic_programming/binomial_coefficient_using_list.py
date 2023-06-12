@@ -13,4 +13,4 @@ def bin(n,k):
 
     return dp[n][k]
 
-print(bin(6,3))
+print(bin(1000,500))
