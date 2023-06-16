@@ -9,5 +9,5 @@ def bin(n,k):
         count+=2  # 재귀간 생성되는 노드 개수
         return bin(n-1,k) + bin(n-1,k-1)
 
-print(bin(20,14))
+print(bin(300,150))
 print(count)
