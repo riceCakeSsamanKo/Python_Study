@@ -2,9 +2,8 @@ import heapq
 
 #내림차순 정렬 함수
 def descendingSort(iterable):
-    if(isinstance(iterable,list)==False):
+    if(isinstance(iterable,list) == False):
         return -1
-
 
     maxHeap = []
     result = []

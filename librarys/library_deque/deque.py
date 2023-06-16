@@ -8,7 +8,7 @@ q = deque([1,2,3,4,5,6,7])
 while q:
     # queue.pop()_ == deque.popleft()
     front = q.popleft()
-    print(front,end=" ")
+    print(front, end=" ")
 print()
 
 for i in range(10):
