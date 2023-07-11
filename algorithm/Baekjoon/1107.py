@@ -1,36 +1,27 @@
 import sys
-read = sys.stdin.readline
+input = sys.stdin.readline
 
+n = int(input())
+m = int(input())
+broken_buttons = []
+if m == 0:
+    pass
+else:
+    broken_buttons = list(map(int,input().split()))
 
-channel = int(read()) # 틀고자 하는 채널
-difference = channel - 100
+result = abs(n-100)
+for i in range(1000001):
+    #틀 수있는 채널 0~100000
+    flag = True # 모든 버튼이 사용 가능한 버튼인 경우 flag = True
+    channel =str(i)
+    for num in channel:
+        if int(num) in broken_buttons:
+            flag = False
+            break
 
-m = int(read()) # 0~9 중 못 쓰는 버튼 수
-num_size = len(str(channel)) # channel = num_size 자리 숫자
-not_used_button = list(map(int,read().split())) # 못 쓰는 버튼
-button = [] # 사용 가능한 버튼
-
-# 사용 가능 버튼 입력
-for i in range(10):
-    if i in not_used_button:
-        continue
-    else:
-        button.append(i)
-
-has_button = [False]*(num_size)
-for i in range(num_size):
-    number = str(channel)[i]
-    if int(number) in button:
-        has_button[i] = True  # i번째 자리 숫자 버튼이 존재함
-print(has_button)
-
-numbers = []
-for i in range(num_size):
-    if has_button[i]:
-        numbers.append(int(str(channel)[i]))
-    else:
-        numbers.append(button)
-
-print(numbers)
-
-
+    if flag:
+        up_down_button = abs(n-i) # +, - 버튼 횟수
+        number_button = len(channel)
+        if result > up_down_button + number_button:
+            result = up_down_button + number_button
+print(result)
