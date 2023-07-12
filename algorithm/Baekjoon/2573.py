@@ -58,16 +58,16 @@ for year in range(max_height):
         for j in range(m):
             if bfs(i, j, visited, adjacent_sea_water):
                 partition += 1
-    if partition > 1:
-        result = year
-        break
+    
 
     for i in range(1,n-1):
         for j in range(1,m-1):
-            if graph[i][j] == 0:
+            if graph[i][j] != 0:
                 for k in range(4):
                     nx = i+dx[k]
                     ny = j+dy[k]
+                    if graph[nx][ny] == 0:
+                        adjacent_sea_water[i][j]+=1
 
     print(f"year:{year}")
     print("<graph>")
