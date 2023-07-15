@@ -1,71 +1,119 @@
+# import sys
+# from collections import deque
+#
+# input = sys.stdin.readline
+#
+# graph = []
+# n, m = list(map(int, input().split()))
+#
+# for _ in range(n):
+#     graph.append(list(map(int, input().split())))
+#
+# dx = [-1, 0, 1, 0]
+# dy = [0, 1, 0, -1]
+#
+#
+# def bfs(x, y):
+#     visited[x][y] = True
+#     queue = deque([(x, y)])
+#
+#     while queue:
+#         x, y = queue.popleft()
+#         sea = 0
+#
+#         for i in range(4):
+#             nx = x + dx[i]
+#             ny = y + dy[i]
+#             if nx < 0 or nx > n or ny < 0 or nx > m:
+#                 continue
+#             if graph[nx][ny] == 0:
+#                 sea += 1
+#             if not visited[nx][ny] and graph[nx][ny] != 0:
+#                 queue.append([nx, ny])
+#                 visited[nx][ny] = True
+#
+#         adjacent_sea_num[x][y] = sea
+#
+#
+# result = 0
+# for k in range(10):
+#     visited = [[False] * m for _ in range(n)]
+#     adjacent_sea_num = [[0] * m for _ in range(n)]
+#     partition = 0
+#
+#     for i in range(n):
+#         for j in range(m):
+#             if not visited[i][j] and graph[i][j] != 0:
+#                 bfs(i, j)
+#                 partition += 1
+#
+#     if partition >= 2:
+#         result = k
+#         break
+#
+#     for i in range(n):
+#         for j in range(m):
+#             graph[i][j] = max(0,graph[i][j]-adjacent_sea_num[i][j])
+#
+# print(result)
+
 import sys
 from collections import deque
-
 input = sys.stdin.readline
-
-
-dx = [-1, 0, 1, 0]
-dy = [0, 1, 0, -1]
 
 
 def bfs(x, y):
     q = deque([(x, y)])
-    visited[x][y] = True
-    sea_list = []  # 인접한 바닷물이 1이상인 경우 (x,y,sea)가 append. sea == 인접 바닷물
+    visited[x][y] = 1
+    seaList = []
 
     while q:
-        x,y = q.popleft()
+        x, y = q.popleft()
         sea = 0
         for i in range(4):
             nx = x + dx[i]
             ny = y + dy[i]
             if 0 <= nx < n and 0 <= ny < m:
-                if graph[nx][ny] == 0:  # graph[nx][ny] = 바닷물
+                if not graph[nx][ny]:
                     sea += 1
-                elif graph[nx][ny] > 0 and not visited[nx][ny]:  # graph[nx][ny] = 빙산
+                elif graph[nx][ny] and not visited[nx][ny]:
                     q.append((nx, ny))
-                    visited[nx][ny] = True
+                    visited[nx][ny] = 1
         if sea > 0:
-            sea_list.append((x, y, sea))
-    for x, y, sea in sea_list:
-        if graph[x][y] - sea >= 0:
-            graph[x][y] -= sea
-        else:
-            graph[x][y] = 0
+            seaList.append((x, y, sea))
+    for x, y, sea in seaList:
+        graph[x][y] = max(0, graph[x][y] - sea)
+
     return 1
 
 
-n, m = list(map(int, input().split()))
+n, m = map(int, input().split())
+graph = [list(map(int, input().split())) for _ in range(n)]
 
-graph = []
-
-for i_ in range(n):
-    graph.append(list(map(int, input().split())))
-
-has_ice = [] # 바닷물이 아닌 인덱스
+ice = []
 for i in range(n):
     for j in range(m):
-        if graph[i][j] != 0:
-            has_ice.append((i,j))
+        if graph[i][j]:
+            ice.append((i, j))
 
-result = 0
+dx = [-1, 1, 0, 0]
+dy = [0, 0, -1, 1]
 year = 0
-while has_ice:
-    visited = [[False]*m for _ in range(n)]
-    partition = 0
-    del_list = []
-    for x,y in has_ice:
-        if graph[x][y] != 0 and not visited[x][y]:
-            partition += bfs(x,y)  # bfs 1회 실행 시 마다, 탐색된 빙산이 녹으므로 has_ice에 들어있는 인덱스일지라도 검사시엔 0일 수도 있다.
-        if graph[x][y] == 0: # 초기엔 빙산이었다가 나중에 녹아 바닷물이 된 인덱스 (graph!=0 -> graph == 0이 된 인덱스ㅓ)
-            del_list.append((x,y))
-    if partition>=2:
-        result = year
-        break
 
-    # has_ice에서 현재는 바닷물이 된(값 > 0 -> 값==0) 인덱스 제거
-    has_ice = sorted(list(set(has_ice) - set(del_list)))
+while ice:
+    visited = [[0] * m for _ in range(n)]
+    delList = []
+    group = 0
+    for i, j in ice:
+        if graph[i][j] and not visited[i][j]:
+            group += bfs(i, j)
+        if graph[i][j] == 0:
+            delList.append((i, j))
+    if group > 1:
+        print(year)
+        break
+    ice = sorted(list(set(ice) - set(delList)))
     year += 1
 
-
-print(result)
+if group < 2:
+    print(0)
