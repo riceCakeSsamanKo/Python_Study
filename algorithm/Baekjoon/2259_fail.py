@@ -1,3 +1,4 @@
+# 두더지가 동시에 등장해도 계산이 가능하게 구현했는데도 불구하고 안풀림 ㅅㅂ
 import math
 import sys
 
@@ -6,11 +7,11 @@ input = sys.stdin.readline
 # n: 두더지 마릿수, s: 1초에 이동할 수 있는 최대 거리
 n, s = map(int, input().split())
 
-# dp[t]: 시간 t에 내가 존재할 수 있는 장소들
+# dp[t]: 시간 t에 내가 존재할 수 있는 좌표,시간(x,y,t)
 dp = [[] for _ in range(6667)]
 dp[0] = [(0, 0, 0)]
 
-graph = {0: [(0, 0)]}  # graph[i]: i번 두더지의 (x,y)좌표, 두더지 출몰 시간 t => [x,y,t]
+graph = {0: [(0, 0)]}  # graph[t]: t 시간에 등장하는 두더지들의 좌표 집합
 
 for _ in range(n):
     x, y, t = list(map(int, input().split()))
@@ -43,7 +44,7 @@ for cur_t in times[1:]:
                 flag = True
                 break
 
-        # bef_pos에서 cur_pos로 이동 가능한 케이스가 있는 경우
+    # bef_pos에서 cur_pos로 이동 가능한 케이스가 있는 경우
     if flag:
         bef_t = cur_t
         idx += 1
