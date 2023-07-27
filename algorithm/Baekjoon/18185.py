@@ -1,32 +1,37 @@
+# 사용횟수가 7원 > 5원 > 3원 일수록 유리함.
+
 import sys
 
-input = sys.stdin.readline
+N = int(sys.stdin.readline())
+A = list(map(int, sys.stdin.readline().split()))
+answer = 0
 
-n = int(input())
-graph = list(map(int, input().split()))
+for i in range(N - 2):
+    if A[i + 1] > A[i + 2]:
+        m = min(A[i], A[i + 1] - A[i + 2])
+        answer += m * 5
+        A[i] -= m
+        A[i + 1] -= m
 
-result = 0
-for i in range(n):
-    while graph[i] > 0:
-        if i < n - 2:
-            if graph[i + 1] > 0 and graph[i + 2] > 0:
-                min_value = min(graph[i], graph[i + 1])
-                min_value = min(min_value, graph[i + 2])
-                graph[i] -= min_value
-                graph[i + 1] -= min_value
-                graph[i + 2] -= min_value
-                result += 7 * min_value
-                continue
-        if i < n - 1:
-            if graph[i + 1] > 0:
-                min_value = min(graph[i], graph[i + 1])
-                graph[i] -= min_value
-                graph[i + 1] -= min_value
-                result += 5 * min_value
-                continue
+    if A[i] > 0 and A[i + 1] > 0 and A[i + 2] > 0:
+        m = min(A[i], A[i + 1])
+        answer += m * 7
+        A[i] -= m
+        A[i + 1] -= m
+        A[i + 2] -= m
 
-        result += 3 * graph[i]
-        graph[i] = 0
+    if A[i] > 0:
+        answer += A[i] * 3
 
+if A[-2] > 0 and A[-1] > 0:
+    m = min(A[-2], A[-1])
+    answer += (m * 5)
+    A[-2] -= m
+    A[-1] -= m
 
-print(result)
+if A[-2] > 0:
+    answer += (A[-2] * 3)
+else:
+    answer += (A[-1] * 3)
+
+print(answer)
