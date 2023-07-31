@@ -1,43 +1,70 @@
+import sys
+
+sys.setrecursionlimit(9999999)
+
+
+def checker(idx, number):
+    _number = hint[idx][0]
+    _strike = hint[idx][1]
+    _ball = hint[idx][2]
+
+    strike = 0
+    ball = 0
+
+    _A = _number // 100
+    _B = (_number - (_A * 100)) // 10
+    _C = _number % 10
+
+    A = number // 100
+    B = (number - (A * 100)) // 10
+    C = number % 10
+
+    if A == 0 or B == 0 or C == 0:
+        return False
+
+    if A == B or A == C or B == C:
+        return False
+
+    if A == _A:
+        strike += 1
+    if B == _B:
+        strike += 1
+    if C == _C:
+        strike += 1
+
+    if A == _B or A == _C:
+        ball += 1
+    if B == _A or B == _C:
+        ball += 1
+    if C == _A or C == _B:
+        ball += 1
+
+    if strike == _strike and ball == _ball:
+        return True
+
+    return False
+
+
+def recur(idx, number):
+    global answer
+
+    if idx == n:
+        answer += 1
+        # print(number)
+        recur(0, number + 1)
+        return
+
+    if number == 1000:
+        return
+
+    if checker(idx, number):
+        recur(idx + 1, number)
+    else:
+        recur(0, number + 1)
+
+
 n = int(input())
 hint = [list(map(int, input().split())) for _ in range(n)]
-
-result = 0
-for a in range(1, 10):  # 100의 자릿수
-    for b in range(10):  # 10의 자릿수
-        if b == a:
-            continue
-        for c in range(10):  # 1의 자릿수
-            if c == a or c == b:
-                continue
-            count = 0
-            for number, strike, ball in hint:
-                num_strike = 0  # Strike 개수
-                num_ball = 0  # Ball 개수
-
-                A = int(str(number)[0])
-                B = int(str(number)[1])
-                C = int(str(number)[2])
-
-                if a == A:
-                    num_strike += 1
-                if b == B:
-                    num_strike += 1
-                if c == C:
-                    num_strike += 1
-
-                if a == B or a == C:
-                    num_ball += 1
-                if b == A or b == C:
-                    num_ball += 1
-                if c == B or c == A:
-                    num_ball += 1
-
-                # 만족안하면 break
-                if num_strike == strike and num_ball == ball:
-                    count += 1
-                else:
-                    break
-            if count == n:
-                result += 1
-
-print(result)
+answer = 0
+recur(0, 100)
+print(answer)
