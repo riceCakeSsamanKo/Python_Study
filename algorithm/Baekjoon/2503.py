@@ -1,6 +1,6 @@
 import sys
-input = sys.stdin.readline
 sys.setrecursionlimit(9999999)
+input = sys.stdin.readline
 
 def checker(idx, number):
     _number = hint[idx][0]
@@ -67,4 +67,3 @@ hint = [list(map(int, input().split())) for _ in range(n)]
 answer = 0
 recur(0, 100)
 print(answer)
-
