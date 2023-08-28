@@ -6,6 +6,7 @@ input = sys.stdin.readline
 dx = [-1, 0, 1, 0]
 dy = [0, -1, 0, 1]
 
+
 def bfs(graph, x, y):
     if graph[x][y] == 0 or visited[x][y]:
         return 0
@@ -23,7 +24,7 @@ def bfs(graph, x, y):
                 continue
             if graph[nx][ny] == 1 and not visited[nx][ny]:
                 visited[nx][ny] = True
-                queue.append((nx,ny))
+                queue.append((nx, ny))
 
     return 1
 
@@ -43,6 +44,6 @@ for _ in range(t):
 
     for i in range(m):
         for j in range(n):
-            result += bfs(graph,i,j)
+            result += bfs(graph, i, j)
 
     print(result)
