@@ -16,4 +16,7 @@ for idx in range(n, 0, -1):
     else:
         dp[idx] = max(dp[idx + graph[idx][0]] + graph[idx][1], dp[idx + 1])
 
+print(graph)
+print(dp)
+
 print(dp[1])
