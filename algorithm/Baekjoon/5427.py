@@ -1,73 +1,119 @@
-import sys
+# import sys
+# from collections import deque
+#
+# input = sys.stdin.readline
+#
+# def show(graph):
+#     for line in graph:
+#         print(line)
+#     print()
+#
+# dx = [-1, 0, 1, 0]
+# dy = [0, 1, 0, -1]
+#
+# def bfs():
+#     while q:
+#         x, y, cur = q.popleft()
+#         move = False
+#         for i in range(4):
+#             nx = x + dx[i]
+#             ny = y + dy[i]
+#
+#             if nx < 0 or nx >= h or ny < 0 or ny >= w:
+#                 if cur == "path":
+#                     return visited[x][y]
+#                 else:
+#                     continue
+#
+#             elif graph[nx][ny] != '#' and graph[nx][ny] != '*':
+#                 if cur == "fire":
+#                     graph[nx][ny] = '*'
+#                 elif cur == "path":
+#                     if visited[nx][ny] == 0:
+#                         visited[nx][ny] = visited[x][y] + 1
+#                         move = True
+#                 q.append((nx, ny, cur))
+#
+#     return "impossible"
+#
+# t = int(input())
+# for _ in range(t):
+#     w, h = map(int, input().split())
+#     graph = []
+#     visited = [[0] * w for _ in range(h)]
+#     q = deque([])
+#     for i in range(h):
+#         graph.append(list(input().strip()))
+#         for j in range(w):
+#             if graph[i][j] == '@':
+#                 visited[i][j] = 1
+#                 init_x, init_y = i, j
+#             elif graph[i][j] == '*':
+#                 q.append((i, j, "fire"))
+#     q.append((init_x, init_y, "path"))
+#     print(bfs())
+#     # show(graph)
+#     # show(visited)
+
+# 불
 from collections import deque
-
+import sys
 input = sys.stdin.readline
-
-dx = [-1, 0, 1, 0]
-dy = [0, -1, 0, 1]
-
-
-def show_array(graph):
-    for line in graph:
-        print(line)
-    print()
+dx = [0, 1, 0, -1]
+dy = [1, 0, -1, 0]
 
 
-def bfs():
-    cnt = 0
-
-    while q:
-        cnt += 1
-        x, y = q.popleft()
-        # 1) cur == "fire": (x,y)에 불
-        # 2) cur == "True": (x,y)에 사람
-        # 3) cur == "false": (x,y)는 벽이거나 길
-        cur = visited[x][y]
-
-        show_array(visited)
-
-        for i in range(4):
-            nx = x + dx[i]
-            ny = y + dy[i]
-
-            if 0 <= nx < h and 0 <= ny < w:
-                if cur == "fire":
-                    if visited[nx][ny] != "fire" and graph[nx][ny] != '#':
-                        # 불꽃 이동
-                        visited[nx][ny] = "fire"
-
-                if cur == True:
-                    if visited[nx][ny] != "fire" and graph[nx][ny] == '.':
-                        # 사람 이동
-                        visited[nx][ny] = True
-
-                q.append([nx, ny])
-            elif cur != "fire":
-                return cnt
-    return "impossible"
+def burn():
+    for _ in range(len(fire)):
+        x, y = fire.popleft()
+        for k in range(4):
+            nx = x + dx[k]
+            ny = y + dy[k]
+            if 0 <= nx < N and 0 <= ny < M:
+                if arr[nx][ny] != '#' and arr[nx][ny] != '*':
+                    arr[nx][ny] = '*'
+                    fire.append((nx, ny))
 
 
-t = int(input())
+def move():
+    isgo = False
+    for _ in range(len(start)):
+        x, y = start.popleft()
+        for k in range(4):
+            nx = x + dx[k]
+            ny = y + dy[k]
+            if 0 <= nx < N and 0 <= ny < M:
+                if visited[nx][ny] == 0 and arr[nx][ny] != '#' and arr[nx][ny] != '*':
+                    isgo = True
+                    visited[nx][ny] = visited[x][y] + 1
+                    start.append((nx, ny))
+            else:
+                return visited[x][y]
+    if not isgo:
+        return 'IMPOSSIBLE'
 
-for _ in range(t):
-    w, h = map(int, input().split())
-    graph = []
-    visited = [[False] * w for _ in range(h)]
-    q = deque([])
 
-    # 통로(.) = 0, 벽(#) = 1, 불꽃(*) = 2
-    for i in range(h):
-        graph.append(list(input().strip()))
-        for j in range(w):
-            if graph[i][j] == '@':
-                visited[i][j] = True
-                start_x, start_y = i, j
-            elif graph[i][j] == '*':
-                visited[i][j] = "fire"
-                # 불꽃의 초기 위치를 먼저 저장
-                q.append([i, j])
+T = int(input())
+for _ in range(T):
+    M, N = map(int, input().split())
+    arr = []
+    fire = deque()
+    start = deque()
+    for i in range(N):
+        arr.append(list(input().strip()))
+        for j in range(M):
+            if arr[i][j] == '*':
+                fire.append((i, j))
+            if arr[i][j] == '@':
+                start.append((i, j))
+    visited = [[0] * M for _ in range(N)]
+    visited[start[0][0]][start[0][1]] = 1
 
-    # 시작 초기 위치를 나중 저장
-    q.append([start_x, start_y])
-    result = bfs()
+    result = 0
+    while True:
+        burn()
+        result = move()
+        if result:
+            break
+
     print(result)
