@@ -56,8 +56,34 @@ for row in selected_rows:
     grade = row[2]
     dept = row[3]
 
-    # 조회한 내영 출력
+    # 조회한 내용 출력
     print("%7s %20s %5d %20s" % (sno, sname, grade, dept))
 
 # 공백 입력전까지 계속해서 데이터 입력하는 프로그램
+while True:
+    sno = input("학번: ")
+    if sno == "":
+        break
+    sname = input("이름: ")
+    grade = input("학년: ")
+    dept = input("학과: ")
+    sql = "insert into student values('" + sno + "','" + sname + \
+          "'," + grade + ", '" + dept + "');"
 
+    try:
+        cursor.execute(sql)
+    except Exception as error:
+        print(error)
+
+cursor.execute("select * from student")
+selected_rows = cursor.fetchall()
+for row in selected_rows:
+    sno = row[0]
+    sname = row[1]
+    grade = row[2]
+    dept = row[3]
+
+    # 조회한 내용 출력
+    print("%7s %20s %5d %20s" % (sno, sname, grade, dept))
+
+cursor.close()
