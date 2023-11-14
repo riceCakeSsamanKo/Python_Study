@@ -11,11 +11,13 @@ import torchvision.transforms as transforms
 from torch.utils.data import Dataset, DataLoader
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+print(device)
 
 # 데이터 셋 다운로드
-train_dataset = torchvision.datasets.FashionMNIST("/Users/jeonmin/Documents/study/080289/chap05/data", download=True,
+root = "E:/study/Python-Practice/deep_learning/learning_data"
+train_dataset = torchvision.datasets.FashionMNIST(root, download=True,
                                                   transform=transforms.Compose([transforms.ToTensor()]))
-test_dataset = torchvision.datasets.FashionMNIST("/Users/jeonmin/Documents/study/080289/chap05/data", download=True,
+test_dataset = torchvision.datasets.FashionMNIST(root, download=True,
                                                  train=False, transform=transforms.Compose([transforms.ToTensor()]))
 
 # DataLoader()를 사용해서 원하는 크기의 배치 단위로 데이터를 불러옴.
