@@ -11,7 +11,7 @@ import torchvision.transforms as transforms
 from torch.utils.data import Dataset, DataLoader
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-print(device)
+print(device)  # gpu가 있다면 gpu에서 없다면 cpu에서 처리함
 
 # 데이터 셋 다운로드
 root = "E:/study/Python-Practice/deep_learning/learning_data"
@@ -78,10 +78,16 @@ labels_list = []
 
 for epoch in range(num_epochs):
     for images, labels in train_loader:
+        # 모델과 데이터는 같은 장치에 존재 해야한다. cpu or gpu
         images, labels = images.to(device), labels.to(device)
 
-        train = Variable(images.view(100, 1, 28, 28))
-        labels = Variable(labels)
+        # Autograd는 자동 미분을 수행하는 파이토치의 패키지.
+        # 순전파 단계에서는 수행하는 모든 연산을 테이프에 저장.
+        # 역전파 단계에서는 저장된 값들을 꺼내어 사용한다.
+        # autograd.Variable을 사용해서 역전파를 위한 미분 값을 자동으로 계산해줌.
+        # 최신 버전의 pytorch는 tensor 자체에서 기울기 계산을 지원하므로 사용 안해도 된다.
+        train = images.view(100, 1, 28, 28)
+        labels = labels
 
         outputs = model(train)
         loss = criterion(outputs, labels)
@@ -96,7 +102,7 @@ for epoch in range(num_epochs):
             for images, labels in test_loader:
                 images, labels = images.to(device), labels.to(device)
                 labels_list.append(labels)
-                test = torch.autograd.Variable(images.view(100, 1, 28, 28))
+                test = images.view(100, 1, 28, 28)
                 outputs = model(test)
                 predictions = torch.max(outputs, 1)[1].to(device)
                 predictions_list.append(predictions)
