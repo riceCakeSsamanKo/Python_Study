@@ -126,6 +126,7 @@ def select(table_name, select_targets, where_text):
     result = cursor.fetchall()
     return sql, result
 
+
 # 테이블 초기화
 init_table()
 
@@ -172,4 +173,28 @@ while True:
 
         insert("course", [cno, cname, credit, profname, dept])
     elif user_select == str(3):
-        select()
+        # 조회
+        sql, results = select("student", "*", None)
+
+        # 출력
+        print("%7s %20s %5s %20s" % ("학번", "이름", "학년", "학과"))
+        for result in results:
+            sno = result[0]
+            sname = result[1]
+            grade = result[2]
+            dept = result[3]
+
+            print("%7s %20s %5s %20s" % (sno, sname, grade, dept))
+    elif user_select == str(4):
+        # 조회
+        sql, results = select("course", "*", None)
+        # 출력
+        print("%4s %20s %5s %20s %20s" % ("과목번호", "과목이름", "학점", "교수이름", "학과"))
+        for result in results:
+            cno = result[0]
+            cname = result[1]
+            credit = result[2]
+            profname = result[3]
+            dept = result[4]
+
+            print("%4s %20s %5d %20s %20s" % (cno, cname, credit, profname, dept))
