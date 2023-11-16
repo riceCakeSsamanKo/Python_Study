@@ -120,11 +120,12 @@ def select(table_name, select_targets, where_text):
 
     try:
         cursor.execute(sql)
+        result = cursor.fetchall()
+        return sql, result
     except Exception as error:
         print(error)
+        return sql, None
 
-    result = cursor.fetchall()
-    return sql, result
 
 
 # 테이블 초기화
@@ -149,11 +150,11 @@ while True:
     print(three)
     print(four)
 
-    user_select = input("기능을 선택하시오: ")
+    user_select = int(input("기능을 선택하시오: "))
     # 종료
-    if user_select == str(0):
+    if user_select == 0:
         break
-    elif user_select == str(1):
+    elif user_select == 1:
         print(">> " + one)
 
         sno = input("학번: ")
@@ -162,7 +163,7 @@ while True:
         dept = input("학과: ")
 
         insert("student", [sno, sname, grade, dept])
-    elif user_select == str(2):
+    elif user_select == 2:
         print(">> " + two)
 
         cno = input("과목번호: ")
@@ -172,7 +173,7 @@ while True:
         dept = input("학과: ")
 
         insert("course", [cno, cname, credit, profname, dept])
-    elif user_select == str(3):
+    elif user_select == 3:
         # 조회
         sql, results = select("student", "*", None)
 
@@ -185,7 +186,7 @@ while True:
             dept = result[3]
 
             print("%7s %20s %5s %20s" % (sno, sname, grade, dept))
-    elif user_select == str(4):
+    elif user_select == 4:
         # 조회
         sql, results = select("course", "*", None)
         # 출력
