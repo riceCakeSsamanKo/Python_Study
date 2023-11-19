@@ -53,6 +53,7 @@ def create_table(table_name, pk_names, column_datas, fk_datas):
     # query 날림
     try:
         cursor.execute(sql)
+        conn.commit()
     except Exception as error:
         print(error)
 

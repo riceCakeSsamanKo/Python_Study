@@ -77,6 +77,7 @@ def update(table_name, set_text, where_text):
     # query 날림
     try:
         cursor.execute(sql)
+        conn.commit()
     except Exception as error:
         print(error)
 
@@ -95,6 +96,7 @@ def delete(table_name, where_text):
     # query 날림
     try:
         cursor.execute(sql)
+        conn.commit()
     except Exception as error:
         print(error)
 
