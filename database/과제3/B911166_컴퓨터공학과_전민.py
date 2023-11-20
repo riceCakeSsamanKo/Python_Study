@@ -1,6 +1,6 @@
 import pymysql as pm
 
-conn = pm.connect(host="localhost", user="root", password="password", db="hotel_booking", charset="utf8mb4")
+conn = pm.connect(host="localhost", user="root", password="root", db="hotel_booking", charset="utf8mb4")
 cursor = conn.cursor()
 
 
@@ -331,8 +331,6 @@ def check_booking_history():
                "b.cid = c.cid and b.hid = h.hid and b.hid = hr.hid and b.room_number = hr.room_number"))
 
     w_file.write("3.4 예약 내역 조회\n")
-
-    # 수정부분! date의 -를 /로 변환해야 함.
     for select_datas in select_data_list:
         cid = select_datas[0]
         cname = select_datas[1]
@@ -355,6 +353,7 @@ def check_booking_history():
         sql_data.append(check_in)
         sql_data.append(check_out)
 
+        # 조회한 데이터 파일에 쓰기
         result = ""
         for data in sql_data:
             result += (str(data) + " ")
