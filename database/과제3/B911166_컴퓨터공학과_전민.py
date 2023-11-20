@@ -129,9 +129,8 @@ def select(table_names, select_targets, where_text):
         if i != num_of_tables - 1:
             sql += ", "
 
-    sql += "\nwhere "
     if where_text is not None:
-        sql += where_text + ";"
+        sql += ("\nwhere " + where_text + ";")
 
     try:
         cursor.execute(sql)
@@ -141,6 +140,28 @@ def select(table_names, select_targets, where_text):
         print("select: " + sql)
         print(error)
         return None
+
+
+# 함수 이름 : delete()
+# 기능 : 테이블에서 데이터 삭제.
+# 반환값 : 없음
+# 전달인자 : table_name: 테이블 명
+#          where_text: 조건문
+def delete(table_name, where_text):
+    sql = "delete\nfrom " + table_name
+
+    if where_text is not None:  # where 문 존재시 작성해줌
+        sql += "\nwhere " + where_text
+    sql += ";"
+
+    # query 날림
+    try:
+        cursor.execute(sql)
+        conn.commit()
+    except Exception as error:
+        print(error)
+
+    return sql
 
 
 # 함수 이름 : join()
@@ -176,16 +197,18 @@ def customer_menu(menu_level_2):
     if menu_level_2 == 1:
         if user is not None:
             print("이미 로그인 되어있습니다")
+        w_file.write("2.1 로그인\n")
         log_in()  # 로그인
     elif menu_level_2 == 2:
         hotel_room_booking()
     elif menu_level_2 == 3:
-        pass
+        hotel_room_reservation_inquiry()
     elif menu_level_2 == 4:
-        pass
+        cancel_booking()
     elif menu_level_2 == 5:
         if user is None:
             print("로그인 필요")
+        w_file.write("2.5 로그아웃\n")
         log_out()  # 로그아웃
     else:
         print("잘못된 입력")
@@ -210,7 +233,29 @@ def hotel_room_booking():
 
 # 2.3
 def hotel_room_reservation_inquiry():
-    pass
+    select_data_list = select(["booking"], ["hid", "room_number", "check_in", "check_out"], None)
+    w_file.write("2.3 호텔방 예약 조회\n")
+
+    for select_datas in select_data_list:
+        result = "> {"
+        for data in select_datas:
+            result += (str(data) + " ")
+        result += "}"
+        w_file.write(result + "\n")
+
+
+# 2.4
+def cancel_booking():
+    line = r_file.readline().strip().split()
+    hid = str(line[0])
+    room_number = str(line[1])
+    cid = user
+
+    where = "hid = " + "'" + hid + "'" + " and room_number = " + "'" + room_number + "'" + " and cid = " + "'" + cid + "'"
+    delete("booking", where)
+
+    w_file.write("2.4 호텔방 예약 취소\n")
+    w_file.write("> " + hid + " " + room_number + "\n")
 
 
 # 함수 이름 : admin_menu()
@@ -223,6 +268,7 @@ def admin_menu(menu_level_2):
     if menu_level_2 == 1:
         if user is not None:
             print("이미 로그인 되어있습니다")
+        w_file.write("3.1 로그인\n")
         log_in()  # 로그인
     elif menu_level_2 == 2:
         hotel_booking()  # 호텔방 예약
@@ -233,6 +279,7 @@ def admin_menu(menu_level_2):
     elif menu_level_2 == 5:
         if user is None:
             print("로그인 필요")
+        w_file.write("3.5 로그아웃\n")
         log_out()  # 로그아웃
     else:
         print("잘못된 입력")
@@ -245,7 +292,6 @@ def log_in():
     read_user = r_file.readline().strip()
 
     user = read_user
-    w_file.write("3.1 로그인\n")
     w_file.write("> " + user + "\n")
 
 
@@ -280,15 +326,36 @@ def register_hotel_room_information():
 def check_booking_history():
     select_data_list = (
         select(["booking b", "hotel h", "hotel_room hr, customer c"],
-                ["b.cid", "c.cname", "b.hid", "h.hname", "h.address", "hr.room_number", "hr.price",
+               ["b.cid", "c.cname", "b.hid", "h.hname", "h.address", "hr.room_number", "hr.price",
                 "b.check_in", "b.check_out"],
-                "b.cid = c.cid and b.hid = h.hid and b.hid = hr.hid and b.room_number = hr.room_number"))
+               "b.cid = c.cid and b.hid = h.hid and b.hid = hr.hid and b.room_number = hr.room_number"))
 
     w_file.write("3.4 예약 내역 조회\n")
-
     for select_datas in select_data_list:
+        cid = select_datas[0]
+        cname = select_datas[1]
+        hid = select_datas[2]
+        hname = select_datas[3]
+        address = select_datas[4]
+        room_number = select_datas[5]
+        price = str(select_datas[6])
+        check_in = str(select_datas[7]).replace("-", "/")
+        check_out = str(select_datas[8]).replace("-", "/")
+
+        sql_data = []
+        sql_data.append(cid)
+        sql_data.append(cname)
+        sql_data.append(hid)
+        sql_data.append(hname)
+        sql_data.append(address)
+        sql_data.append(room_number)
+        sql_data.append(price)
+        sql_data.append(check_in)
+        sql_data.append(check_out)
+
+        # 조회한 데이터 파일에 쓰기
         result = ""
-        for data in select_datas:
+        for data in sql_data:
             result += (str(data) + " ")
         w_file.write("> " + result + "\n")
 
@@ -296,7 +363,6 @@ def check_booking_history():
 # 3.5
 def log_out():
     global user
-    w_file.write("3.5 로그아웃\n")
     w_file.write("> " + user + "\n")
     user = None
 
@@ -358,3 +424,4 @@ w_file = open("output.txt", "w")
 doTask()
 r_file.close()
 w_file.close()
+init_table()
