@@ -1,6 +1,6 @@
 import pymysql as pm
 
-conn = pm.connect(host="localhost", user="root", password="root", db="hotel_booking", charset="utf8mb4")
+conn = pm.connect(host="localhost", user="root", password="password", db="hotel_booking", charset="utf8mb4")
 cursor = conn.cursor()
 
 
@@ -424,4 +424,3 @@ w_file = open("output.txt", "w")
 doTask()
 r_file.close()
 w_file.close()
-init_table()
