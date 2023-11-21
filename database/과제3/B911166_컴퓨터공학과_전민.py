@@ -62,7 +62,6 @@ def create_table(table_name, pk_names, column_datas, fk_datas):
     try:
         cursor.execute(sql)
     except Exception as error:
-        print("create_table")
         print(error)
 
     return sql
@@ -94,7 +93,6 @@ def insert(table_name, datas):
         cursor.execute(sql)
         conn.commit()
     except Exception as error:
-        print("insert:\n" + sql)
         print(error)
 
     return sql
@@ -103,8 +101,8 @@ def insert(table_name, datas):
 # 함수 이름 : select()
 # 기능 : 테이블에서 정보 조회
 # 반환값 : 없음
-# 전달인자 : table_name : 테이블 이름,
-#          select_target : 조회 대상
+# 전달인자 : table_names : 테이블 이름 리스트,
+#          select_targets : 조회 대상 리스트
 #           where_text : 조건문 (없으면 None)
 def select(table_names, select_targets, where_text):
     sql = "select "
@@ -137,7 +135,6 @@ def select(table_names, select_targets, where_text):
         result = cursor.fetchall()
         return result
     except Exception as error:
-        print("select: " + sql)
         print(error)
         return None
 
@@ -165,7 +162,7 @@ def delete(table_name, where_text):
 
 
 # 함수 이름 : join()
-# 기능 : 파일에서 데이터 읽어들임.
+# 기능 : 회원가입 기능.
 # 반환값 : 없음
 # 전달인자 : 없음
 def join():
@@ -174,14 +171,15 @@ def join():
     line = line.strip()
     column_values = line.split()
     CID = column_values[0]
-    name = column_values[1]
+    cname = column_values[1]
     phone = column_values[2]
 
-    insert("customer", [CID, name, phone])
+    datas = [CID, cname, phone]
+    insert("customer", datas)
 
     # 출력 형식
     w_file.write("1.1. 회원가입\n")
-    w_file.write("> " + CID + ' ' + name + ' ' + phone + "\n")
+    w_file.write("> " + CID + ' ' + cname + ' ' + phone + "\n")
 
 
 user = None  # 로그인한 유저 정보
@@ -195,10 +193,8 @@ def customer_menu(menu_level_2):
     global user
 
     if menu_level_2 == 1:
-        if user is not None:
-            print("이미 로그인 되어있습니다")
-        w_file.write("2.1 로그인\n")
-        log_in()  # 로그인
+        w_file.write("2.1. 로그인\n")
+        log_in("CUSTOMER")
     elif menu_level_2 == 2:
         hotel_room_booking()
     elif menu_level_2 == 3:
@@ -206,12 +202,10 @@ def customer_menu(menu_level_2):
     elif menu_level_2 == 4:
         cancel_booking()
     elif menu_level_2 == 5:
-        if user is None:
-            print("로그인 필요")
-        w_file.write("2.5 로그아웃\n")
+        w_file.write("2.5. 로그아웃\n")
         log_out()  # 로그아웃
     else:
-        print("잘못된 입력")
+        raise Exception("잘못된 입력")
 
 
 # ----- customer_menu 세부 기능 구현
@@ -226,20 +220,29 @@ def hotel_room_booking():
     check_in = line[2]
     check_out = line[3]
 
-    insert("booking", [hid, cid, room_number, check_in, check_out])
-    w_file.write("2.2 호텔방 예약\n")
+    datas = [hid, cid, room_number, check_in, check_out]
+    insert("booking", datas)
+
+    w_file.write("2.2. 호텔방 예약\n")
     w_file.write("> " + hid + " " + room_number + " " + check_in + " " + check_out + "\n")
 
 
 # 2.3
 def hotel_room_reservation_inquiry():
-    select_data_list = select(["booking"], ["hid", "room_number", "check_in", "check_out"], None)
-    w_file.write("2.3 호텔방 예약 조회\n")
+    table_names = ["booking"]
+    select_targets = ["hid", "room_number", "check_in", "check_out"]
+    where = None
+
+    select_data_list = select(table_names, select_targets, where)
+
+    w_file.write("2.3. 호텔방 예약 조회\n")
 
     for select_datas in select_data_list:
         result = "> {"
+
         for data in select_datas:
             result += (str(data) + " ")
+
         result += "}"
         w_file.write(result + "\n")
 
@@ -254,7 +257,7 @@ def cancel_booking():
     where = "hid = " + "'" + hid + "'" + " and room_number = " + "'" + room_number + "'" + " and cid = " + "'" + cid + "'"
     delete("booking", where)
 
-    w_file.write("2.4 호텔방 예약 취소\n")
+    w_file.write("2.4. 호텔방 예약 취소\n")
     w_file.write("> " + hid + " " + room_number + "\n")
 
 
@@ -266,10 +269,8 @@ def admin_menu(menu_level_2):
     global user
 
     if menu_level_2 == 1:
-        if user is not None:
-            print("이미 로그인 되어있습니다")
-        w_file.write("3.1 로그인\n")
-        log_in()  # 로그인
+        w_file.write("3.1. 로그인\n")
+        log_in("ADMIN")
     elif menu_level_2 == 2:
         hotel_booking()  # 호텔방 예약
     elif menu_level_2 == 3:
@@ -277,19 +278,38 @@ def admin_menu(menu_level_2):
     elif menu_level_2 == 4:
         check_booking_history()  # 예약 내역 조회
     elif menu_level_2 == 5:
-        if user is None:
-            print("로그인 필요")
-        w_file.write("3.5 로그아웃\n")
+        w_file.write("3.5. 로그아웃\n")
         log_out()  # 로그아웃
     else:
-        print("잘못된 입력")
+        raise Exception("잘못된 입력")
 
 
 # ----- admin_menu 세부 기능 구현 ----- #
-# 3.1
-def log_in():
+# 2.1, 3.1
+def log_in(login_type):
     global user
+
+    # 이미 로그인되어 있는 경우 예외 발생
+    if user is not None:
+        raise Exception("이미 로그인되어 있습니다")
+
+    # 아이디 읽기
     read_user = r_file.readline().strip()
+
+    # 운영자 로그인의 경우 운영자 아이디인지 체크
+    if login_type == "ADMIN":
+        if read_user != "admin":
+            raise Exception("운영자가 아니라면 로그인할 수 없습니다.")
+
+    # DB에서 user가 존재하는지 조회하여 존재하지 않은 경우, 예외 발생
+    table_names = ["customer"]
+    select_targets = ["cname"]
+    where = "cid = '" + read_user + "'"
+
+    user_cname = select(table_names, select_targets, where)
+
+    if user_cname == ():
+        raise Exception("가입되지 않은 아이디입니다")
 
     user = read_user
     w_file.write("> " + user + "\n")
@@ -303,8 +323,12 @@ def hotel_booking():
     hid = line[0]
     hname = line[1]
     address = line[2]
-    insert("hotel", [hid, hname, address])
-    w_file.write("3.2 호텔 정보 등록\n")
+
+    table_name = "hotel"
+    datas = [hid, hname, address]
+    insert("hotel", datas)
+
+    w_file.write("3.2. 호텔 정보 등록\n")
     w_file.write("> " + hid + " " + hname + " " + address + "\n")
 
 
@@ -318,7 +342,7 @@ def register_hotel_room_information():
     price = line[2]
 
     insert("hotel_room", [hid, room_number, price])
-    w_file.write("3.3 호텔방 정보 등록\n")
+    w_file.write("3.3. 호텔방 정보 등록\n")
     w_file.write("> " + hid + " " + room_number + " " + price + "\n")
 
 
@@ -330,29 +354,16 @@ def check_booking_history():
                 "b.check_in", "b.check_out"],
                "b.cid = c.cid and b.hid = h.hid and b.hid = hr.hid and b.room_number = hr.room_number"))
 
-    w_file.write("3.4 예약 내역 조회\n")
+    w_file.write("3.4. 예약 내역 조회\n")
     for select_datas in select_data_list:
-        cid = select_datas[0]
-        cname = select_datas[1]
-        hid = select_datas[2]
-        hname = select_datas[3]
-        address = select_datas[4]
-        room_number = select_datas[5]
-        price = str(select_datas[6])
-        check_in = str(select_datas[7]).replace("-", "/")
-        check_out = str(select_datas[8]).replace("-", "/")
-
+        cnt = 0
         sql_data = []
-        sql_data.append(cid)
-        sql_data.append(cname)
-        sql_data.append(hid)
-        sql_data.append(hname)
-        sql_data.append(address)
-        sql_data.append(room_number)
-        sql_data.append(price)
-        sql_data.append(check_in)
-        sql_data.append(check_out)
-
+        for column in select_datas:
+            if cnt == 7 or cnt == 8:
+                column = str(column).replace("-","/")  # date 타입 조회시 "-"를 "/"로 바꾸기
+            sql_data.append(column)
+            cnt += 1
+        
         # 조회한 데이터 파일에 쓰기
         result = ""
         for data in sql_data:
@@ -363,7 +374,12 @@ def check_booking_history():
 # 3.5
 def log_out():
     global user
-    w_file.write("> " + user + "\n")
+    # 로그인 되어 있지 않은 경우 예외 발생
+    if user is None:
+        raise Exception("로그인이 필요합니다")
+    w_file.write("> " + str(user) + "\n")
+
+    # 로그아웃
     user = None
 
 
@@ -413,9 +429,8 @@ create_table("customer", ["cid"],
              [["cid", "varchar(30) not null"], ["cname", "varchar(30)"], ["phoneNumber", "varchar(30)"]],
              None)
 create_table("booking", ["hid", "cid", "room_number"],
-             [["hid", "varchar(30) not null"], ["cid", "varchar(30) not null"], ["room_number", "varchar(30) not null"],
-              ["check_in", "date"],
-              ["check_out", "date"]],
+             [["hid", "varchar(30) not null"], ["cid", "varchar(30) not null"],
+              ["room_number", "varchar(30) not null"], ["check_in", "date"], ["check_out", "date"]],
              [["hotel", "hid"], ["customer", "cid"], ["hotel_room", "room_number"]])
 
 r_file = open("input.txt", "r", encoding="utf-8")
@@ -424,4 +439,3 @@ w_file = open("output.txt", "w")
 doTask()
 r_file.close()
 w_file.close()
-init_table()
