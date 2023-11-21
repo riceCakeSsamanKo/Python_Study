@@ -9,16 +9,22 @@ import torch.nn.functional as F
 import torchvision
 import torchvision.transforms as transforms
 from torch.utils.data import Dataset, DataLoader
+from PIL import Image
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print(device)  # gpu가 있다면 gpu에서 없다면 cpu에서 처리함
 
 # 데이터 셋 다운로드
 # root = "E:/study/Python-Practice/deep_learning/learning_data"
-root = "/Users/jeonmin/Documents/study/Python_Study/deep_learning/learning_data"
-train_dataset = torchvision.datasets.Food101(root, download=True, transform=transforms.Compose([transforms.ToTensor()]))
-test_dataset = torchvision.datasets.Food101(root, download=True, train=False,
-                                            transform=transforms.Compose([transforms.ToTensor()]))
+root = "C:/Users/ad/Documents/study/Python_Study/deep_learning/learning_data"
+# root = "/Users/jeonmin/Documents/study/Python_Study/deep_learning/learning_data"
+
+transforms = transforms.Compose([
+    transforms.Resize((28, 28)),
+    transforms.ToTensor()
+])
+train_dataset = torchvision.datasets.Food101(root, download=True, transform=transforms)
+test_dataset = torchvision.datasets.Food101(root, download=True, split="test", transform=transforms)
 
 # DataLoader()를 사용해서 원하는 크기의 배치 단위로 데이터를 불러옴.
 train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=100)  # train_dataset에서 100개 단위로 데이터를 묶어서 불러온다.
@@ -126,7 +132,7 @@ labels_map = {0: 'apple_pie',
               98: 'tiramisu',
               99: 'tuna_tartare',
               100: 'waffles'
-}
+              }
 columns = 4
 rows = 5
 for i in range(1, columns * rows + 1):
@@ -143,7 +149,7 @@ class FoodCNN(nn.Module):
     def __init__(self):
         super(FoodCNN, self).__init__()
         self.layer1 = nn.Sequential(
-            nn.Conv2d(in_channels=1, out_channels=32, kernel_size=3, padding=1),
+            nn.Conv2d(in_channels=3, out_channels=32, kernel_size=3, padding=1),
             nn.BatchNorm2d(32),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2)
@@ -157,7 +163,7 @@ class FoodCNN(nn.Module):
         self.fc1 = nn.Linear(in_features=64 * 6 * 6, out_features=600)
         self.drop = nn.Dropout(0.25)
         self.fc2 = nn.Linear(in_features=600, out_features=120)
-        self.fc3 = nn.Linear(in_features=120, out_features=10)
+        self.fc3 = nn.Linear(in_features=120, out_features=101)
 
     def forward(self, x):
         out = self.layer1(x)
@@ -191,8 +197,9 @@ labels_list = []
 for epoch in range(num_epochs):
     for images, labels in train_loader:
         images, labels = images.to(device), labels.to(device)
+        print()
 
-        train = images.view(100, 1, 28, 28)
+        train = images.view(100, 3, 28, 28)
 
         outputs = model(train)
         loss = criterion(outputs, labels)
@@ -201,13 +208,13 @@ for epoch in range(num_epochs):
         optimizer.step()
         count += 1
 
-        if not (count % 50):
+        if not (count % 10):
             total = 0
             correct = 0
             for images, labels in test_loader:
                 images, labels = images.to(device), labels.to(device)
                 labels_list.append(labels)
-                test = images.view(100, 1, 28, 28)
+                test = images.view(100, 3, 28, 28)
                 outputs = model(test)
                 predictions = torch.max(outputs, 1)[1].to(device)
                 predictions_list.append(predictions)
@@ -219,7 +226,7 @@ for epoch in range(num_epochs):
             iteration_list.append(count)
             accuracy_list.append(accuracy)
 
-        if not (count % 500):
+        if not (count % 20):
             print("Iteration: {}, Loss: {}, Accuracy: {}%".format(count, loss.data, accuracy))
 
 plt.figure(figsize=(8, 6))
@@ -230,3 +237,5 @@ plt.title('Accuracy vs Iterations')
 plt.legend()
 plt.grid(True)
 plt.show()
+
+

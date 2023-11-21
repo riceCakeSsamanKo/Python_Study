@@ -15,15 +15,16 @@ print(device)  # gpu가 있다면 gpu에서 없다면 cpu에서 처리함
 
 # 데이터 셋 다운로드
 # root = "E:/study/Python-Practice/deep_learning/learning_data"
-root = "/Users/jeonmin/Documents/study/Python_Study/deep_learning/learning_data"
+# root = "/Users/jeonmin/Documents/study/Python_Study/deep_learning/learning_data"
+root = "C:/Users/ad/Documents/study/Python_Study/deep_learning/learning_data"
 train_dataset = torchvision.datasets.FashionMNIST(root, download=True,
                                                   transform=transforms.Compose([transforms.ToTensor()]))
 test_dataset = torchvision.datasets.FashionMNIST(root, download=True,
                                                  train=False, transform=transforms.Compose([transforms.ToTensor()]))
 
 # DataLoader()를 사용해서 원하는 크기의 배치 단위로 데이터를 불러옴.
-train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=100)  # train_dataset에서 100개 단위로 데이터를 묶어서 불러온다.
-test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=100)
+train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=500)  # train_dataset에서 100개 단위로 데이터를 묶어서 불러온다.
+test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=500)
 
 labels_map = {0: 'T-Shirt', 1: 'Trouser', 2: 'Pullover', 3: 'Dress', 4: 'Coat', 5: 'Sandal', 6: 'Shirt',
               7: 'Sneaker', 8: 'Bag', 9: 'Ankle Boot'}
@@ -121,7 +122,7 @@ for epoch in range(num_epochs):
             iteration_list.append(count)
             accuracy_list.append(accuracy)
 
-        if not (count % 500):
+        if not (count % 50):
             print("Iteration: {}, Loss: {}, Accuracy: {}%".format(count, loss.data, accuracy))
 
 plt.figure(figsize=(8, 6))
