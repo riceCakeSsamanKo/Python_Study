@@ -197,8 +197,6 @@ labels_list = []
 for epoch in range(num_epochs):
     for images, labels in train_loader:
         images, labels = images.to(device), labels.to(device)
-        print()
-
         train = images.view(100, 3, 28, 28)
 
         outputs = model(train)
