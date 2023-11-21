@@ -1,6 +1,6 @@
 import pymysql as pm
 
-conn = pm.connect(host="localhost", user="root", password="password", db="hotel_booking", charset="utf8mb4")
+conn = pm.connect(host="localhost", user="root", password="root", db="hotel_booking", charset="utf8mb4")
 cursor = conn.cursor()
 
 
@@ -73,7 +73,7 @@ def create_table(table_name, pk_names, column_datas, fk_datas):
 # 전달인자 : table_name : 테이블 이름,
 #           datas : 해당 테이블의 정보 리스트
 def insert(table_name, datas):
-    l = len(datas)
+    num_of_datas = len(datas)
     sql = "insert into " + table_name + " values("
 
     # 길이 카운트(',' 넣을지 말지 결정)
@@ -84,7 +84,7 @@ def insert(table_name, datas):
             data = "'" + data + "'"
         sql += str(data)
 
-        if cnt != l:
+        if cnt != num_of_datas:
             sql += ","
     sql += ");"
 
@@ -169,7 +169,7 @@ def join():
     # 입력 형식: 고객 ID, 이름, 전화번호 정보를 입력 파일로부터 읽기
     line = r_file.readline()
     line = line.strip()
-    column_values = line.split()
+    column_values = line.strip().split()
     CID = column_values[0]
     cname = column_values[1]
     phone = column_values[2]
@@ -250,6 +250,7 @@ def hotel_room_reservation_inquiry():
 # 2.4
 def cancel_booking():
     line = r_file.readline().strip().split()
+
     hid = str(line[0])
     room_number = str(line[1])
     cid = user
@@ -324,7 +325,6 @@ def hotel_booking():
     hname = line[1]
     address = line[2]
 
-    table_name = "hotel"
     datas = [hid, hname, address]
     insert("hotel", datas)
 
@@ -341,29 +341,35 @@ def register_hotel_room_information():
     room_number = line[1]
     price = line[2]
 
-    insert("hotel_room", [hid, room_number, price])
+    datas = [hid, room_number, price]
+    insert("hotel_room", datas)
+
     w_file.write("3.3. 호텔방 정보 등록\n")
     w_file.write("> " + hid + " " + room_number + " " + price + "\n")
 
 
 # 3.4
 def check_booking_history():
-    select_data_list = (
-        select(["booking b", "hotel h", "hotel_room hr, customer c"],
-               ["b.cid", "c.cname", "b.hid", "h.hname", "h.address", "hr.room_number", "hr.price",
-                "b.check_in", "b.check_out"],
-               "b.cid = c.cid and b.hid = h.hid and b.hid = hr.hid and b.room_number = hr.room_number"))
+    table_names = ["booking b", "hotel h", "hotel_room hr, customer c"]
+    select_targets = ["b.cid", "c.cname", "b.hid", "h.hname",
+                      "h.address", "hr.room_number", "hr.price", "b.check_in", "b.check_out"]
+    where = "b.cid = c.cid and b.hid = h.hid and b.hid = hr.hid and b.room_number = hr.room_number"
+
+    select_datas_list = select(table_names, select_targets, where)
 
     w_file.write("3.4. 예약 내역 조회\n")
-    for select_datas in select_data_list:
+
+    for select_datas in select_datas_list:
         cnt = 0
         sql_data = []
         for column in select_datas:
+            # 조회된 column의 타입이 date
             if cnt == 7 or cnt == 8:
-                column = str(column).replace("-","/")  # date 타입 조회시 "-"를 "/"로 바꾸기
+                column = str(column).replace("-", "/")  # date 타입 조회시 "-"를 "/"로 바꾸기
+
             sql_data.append(column)
             cnt += 1
-        
+
         # 조회한 데이터 파일에 쓰기
         result = ""
         for data in sql_data:
@@ -371,18 +377,20 @@ def check_booking_history():
         w_file.write("> " + result + "\n")
 
 
-# 3.5
+# 2.5, 3.5
 def log_out():
     global user
+
     # 로그인 되어 있지 않은 경우 예외 발생
     if user is None:
         raise Exception("로그인이 필요합니다")
-    w_file.write("> " + str(user) + "\n")
 
-    # 로그아웃
+    w_file.write("> " + str(user) + "\n")
+    # 로그인된 유저 제거
     user = None
 
 
+# 1.2
 def exit():
     w_file.write("1.2. 종료\n")
 
@@ -418,16 +426,24 @@ def doTask():
 init_table()
 
 # 테이블 생성
+
+## hotel 생성
 create_table("hotel", ["hid"],
              [["hid", "varchar(30) not null"], ["hname", "varchar(30)"], ["address", "varchar(30)"]],
              None)
+
+## hotel_room 생성
 create_table("hotel_room", ["hid", "room_number"],
              [["hid", "varchar(30) not null"], ["room_number", "varchar(30) not null"], ["price", "int"]],
              [["hotel", "hid"]])
 cursor.execute("create index index_name on hotel_room(room_number);")
+
+## customer 생성
 create_table("customer", ["cid"],
              [["cid", "varchar(30) not null"], ["cname", "varchar(30)"], ["phoneNumber", "varchar(30)"]],
              None)
+
+## booking 생성
 create_table("booking", ["hid", "cid", "room_number"],
              [["hid", "varchar(30) not null"], ["cid", "varchar(30) not null"],
               ["room_number", "varchar(30) not null"], ["check_in", "date"], ["check_out", "date"]],
