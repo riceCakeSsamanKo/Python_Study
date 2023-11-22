@@ -20,7 +20,7 @@ root = "C:/Users/ad/Documents/study/Python_Study/deep_learning/learning_data"
 # root = "/Users/jeonmin/Documents/study/Python_Study/deep_learning/learning_data"
 
 transforms = transforms.Compose([
-    transforms.Resize((28, 28)),
+    transforms.Resize((64, 64)),
     transforms.ToTensor()
 ])
 train_dataset = torchvision.datasets.Food101(root, download=True, transform=transforms)
@@ -160,7 +160,7 @@ class FoodCNN(nn.Module):
             nn.ReLU(),
             nn.MaxPool2d(2)
         )
-        self.fc1 = nn.Linear(in_features=64 * 6 * 6, out_features=600)
+        self.fc1 = nn.Linear(in_features=64 * 15 * 15, out_features=600)
         self.drop = nn.Dropout(0.25)
         self.fc2 = nn.Linear(in_features=600, out_features=120)
         self.fc3 = nn.Linear(in_features=120, out_features=101)
@@ -195,9 +195,16 @@ predictions_list = []
 labels_list = []
 
 for epoch in range(num_epochs):
+    print(f"epoch={epoch}/{num_epochs}")
     for images, labels in train_loader:
+
         images, labels = images.to(device), labels.to(device)
-        train = images.view(100, 3, 28, 28)
+        # 예외처리
+        try:
+            train = images.view(100, 3, 64, 64)
+        except:
+            print("train:", images.shape)
+            continue
 
         outputs = model(train)
         loss = criterion(outputs, labels)
@@ -206,13 +213,20 @@ for epoch in range(num_epochs):
         optimizer.step()
         count += 1
 
-        if not (count % 10):
+        if not (count % 50):
             total = 0
             correct = 0
             for images, labels in test_loader:
                 images, labels = images.to(device), labels.to(device)
                 labels_list.append(labels)
-                test = images.view(100, 3, 28, 28)
+
+                # 배치 사이즈가 100이 아닌 경우 예외 터져서 예외 처리함
+                try:
+                    test = images.view(100, 3, 64, 64)
+                except:
+                    print("test:", images.shape)
+                    continue
+
                 outputs = model(test)
                 predictions = torch.max(outputs, 1)[1].to(device)
                 predictions_list.append(predictions)
@@ -224,7 +238,7 @@ for epoch in range(num_epochs):
             iteration_list.append(count)
             accuracy_list.append(accuracy)
 
-        if not (count % 20):
+        if not (count % 500):
             print("Iteration: {}, Loss: {}, Accuracy: {}%".format(count, loss.data, accuracy))
 
 plt.figure(figsize=(8, 6))
