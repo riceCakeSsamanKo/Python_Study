@@ -32,8 +32,8 @@ K.clear_session()
 
 n_classes = 101
 img_width, img_height = 299, 299
-train_data_dir = 'C:/Users/jeonmin/Desktop/Food-101/train'
-validation_data_dir = 'C:/Users/jeonmin/Desktop/Food-101/test'
+train_data_dir = 'C:/Users/ad/Desktop/Food-101/train'
+validation_data_dir = 'C:/Users/ad/Desktop/Food-101/test'
 nb_train_samples = 75750
 nb_validation_samples = 25250
 batch_size = 20
