@@ -23,8 +23,8 @@ test_dataset = torchvision.datasets.FashionMNIST(root, download=True,
                                                  train=False, transform=transforms.Compose([transforms.ToTensor()]))
 
 # DataLoader()를 사용해서 원하는 크기의 배치 단위로 데이터를 불러옴.
-train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=500)  # train_dataset에서 100개 단위로 데이터를 묶어서 불러온다.
-test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=500)
+train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=100)  # train_dataset에서 100개 단위로 데이터를 묶어서 불러온다.
+test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=100)
 
 labels_map = {0: 'T-Shirt', 1: 'Trouser', 2: 'Pullover', 3: 'Dress', 4: 'Coat', 5: 'Sandal', 6: 'Shirt',
               7: 'Sneaker', 8: 'Bag', 9: 'Ankle Boot'}
