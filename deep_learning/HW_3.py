@@ -13,7 +13,7 @@ from torch.utils.data import Dataset, DataLoader
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print(device)  # gpu가 있다면 gpu에서 없다면 cpu에서 처리함
 
-root = "/Users/jeonmin/Documents/study/Python_Study/deep_learning/learning_data"
+root = "E:/study/Python_Study/deep_learning/learning_data"
 
 # train_dataset[a] = (pixels, label)
 train_dataset = torchvision.datasets.MNIST(root=root, train=True, download=True,
@@ -40,7 +40,7 @@ def show_random_datas():
         plt.imshow(img, cmap='gray')
     plt.show()
 
-show_random_datas()
+# show_random_datas()
 
 
 class CNN(nn.Module):
@@ -73,14 +73,14 @@ class CNN(nn.Module):
         self.layer2_feature_size = 64 * 6 * 6
         self.layer3_feature_size = 128 * 2 * 2
 
-        self.fc1 = nn.Linear(in_features=self.layer1_feature_size, out_features=600)
+        self.fc1 = nn.Linear(in_features=self.layer2_feature_size, out_features=600)
         self.drop = nn.Dropout(0.25)
         self.fc2 = nn.Linear(in_features=600, out_features=120)
         self.fc3 = nn.Linear(in_features=120, out_features=10)
 
     def forward(self, x):
         out = self.layer1(x)
-        # out = self.layer2(out)
+        out = self.layer2(out)
         # out = self.layer3(out)
         out = out.view(out.size(0), -1)
         out = self.fc1(out)
@@ -101,11 +101,11 @@ learning_rate = 0.001
 criterion = nn.CrossEntropyLoss()
 
 '''optimization 함수'''
-# optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
-optimizer = torch.optim.Adagrad(model.parameters(), lr=learning_rate)
+optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
+# optimizer = torch.optim.Adagrad(model.parameters(), lr=learning_rate)
 # optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
-num_epochs = 1
+num_epochs = 3
 count = 0
 loss_list = []
 iteration_list = []
@@ -130,7 +130,7 @@ for epoch in range(num_epochs):
         optimizer.step()
         count += 1
 
-        if not (count % 10):
+        if not (count % 5):
             total = 0
             correct = 0
 
@@ -153,9 +153,9 @@ for epoch in range(num_epochs):
             # 정확도
             accuracy = correct * 100 / total
 
-            loss_list.append(loss.data)
+            loss_list.append(loss.item())
             iteration_list.append(count)
-            accuracy_list.append(accuracy)
+            accuracy_list.append(accuracy.item())
 
         # iterantion에 따른 loss와 accuracy 출력
         if not (count % 100):
