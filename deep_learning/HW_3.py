@@ -69,6 +69,7 @@ class CNN(nn.Module):
             nn.MaxPool2d(2)
         )
 
+        # 사용하는 hidden layer 수에 따른 in_features 매개변수 값 `(hidden layer를 거치며 남은 데이터의 수가 변하기 때문에 각각 다른 값을 사용한다)
         self.layer1_feature_size = 32 * 14 * 14
         self.layer2_feature_size = 64 * 6 * 6
         self.layer3_feature_size = 128 * 2 * 2
