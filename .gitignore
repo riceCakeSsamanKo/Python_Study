@@ -6,4 +6,4 @@
 .idea
 librarys/.DS_Store
 *.gz
-
+*.pth
