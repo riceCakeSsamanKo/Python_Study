@@ -3,10 +3,10 @@ import random
 import shutil
 
 # 경로 설정
-train_images_dir = './pidray/train/images'
-train_labels_dir = './pidray/train/labels'
-valid_images_dir = './pidray/valid/images'
-valid_labels_dir = './pidray/valid/labels'
+train_images_dir = 'E:/GitHub/Python_Study/기계학습 심화/final_exam_x-ray_cnn/pidray/train/images/'
+train_labels_dir = 'E:/GitHub/Python_Study/기계학습 심화/final_exam_x-ray_cnn/pidray/train/labels/'
+valid_images_dir = 'E:/GitHub/Python_Study/기계학습 심화/final_exam_x-ray_cnn/pidray/valid/images/'
+valid_labels_dir = 'E:/GitHub/Python_Study/기계학습 심화/final_exam_x-ray_cnn/pidray/valid/labels/'
 
 # 유효한 파일 목록을 가져오기
 train_images = sorted(os.listdir(train_images_dir))
@@ -16,8 +16,12 @@ train_labels = sorted(os.listdir(train_labels_dir))
 train_files = [os.path.splitext(f)[0] for f in train_images]
 
 # 랜덤하게 1000개의 파일 선택
-random.seed(42)  # 결과 재현성을 위해 시드 고정
+random.seed(123)  # 결과 재현성을 위해 시드 고정
 selected_files = random.sample(train_files, 1000)
+
+# 대상 디렉토리 생성
+os.makedirs(valid_images_dir, exist_ok=True)
+os.makedirs(valid_labels_dir, exist_ok=True)
 
 # 선택된 파일들을 validation 디렉토리로 이동
 for file in selected_files:
